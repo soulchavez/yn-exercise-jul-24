@@ -87,6 +87,8 @@ export const FormView = () => {
                     TASK 2:
                     - Integrate CheckboxGroup into the form, controlled
                     by react-hook-form.
+                    - Ensure the form's initial state is properly
+                    configured to kickstart the form's state cycle.
                     - Do NOT modify types of answers.interests or
                     CheckboxGroup's options. This could be detrimental
                     to your final assessment.
