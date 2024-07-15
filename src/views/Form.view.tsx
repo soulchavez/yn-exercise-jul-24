@@ -144,6 +144,8 @@ export const FormView = () => {
                             options={castValueArray(
                                 value as Array<DomainOption>,
                             )}
+                            helperText={errors.interests?.message || ''}
+                            error={Boolean(errors.interests?.message)}
                         />
                     )}
                     name="interests"

@@ -1,4 +1,6 @@
-import { object, string, mixed } from 'yup'
+import { object, string, array } from 'yup'
+
+import { DomainOption } from '../domain/types'
 
 const IS_REQUIRED_MSG = 'This field is required'
 const IS_NUMBER_MSG = 'This field must be a number'
@@ -14,6 +16,7 @@ const AGE_MIN = 18
 const AGE_MIN_MSG = (minAge: number) =>
     `You should be at least ${minAge} years old.`
 const AGE_MAX_MSG = (maxAge: number) => `You cannot be over ${maxAge}`
+const INTEREST_MSG = 'Please select at least one interest.'
 
 // TASK 1:
 // - Implement additional validations for the age field.
@@ -53,5 +56,14 @@ export const validationSchema = object().shape({
     // - Implement a validation rule for the 'interests' field.
     // - The validation should ensure that at least one option is selected.
     // - If no option is selected, display an error message.
-    interests: mixed().notRequired(),
+    interests: array()
+        .required()
+        .test('oneSelected', INTEREST_MSG, value => {
+            const val = value as Array<DomainOption>
+            return (
+                val.filter(
+                    el => el[Number(Object.keys(el)[0])].isChecked === true,
+                ).length > 0
+            )
+        }),
 })
