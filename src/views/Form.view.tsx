@@ -5,6 +5,8 @@ import { Controller, useForm } from 'react-hook-form'
 
 import { useUpdateAnswers } from '../api-hooks/useUpdateAnswers'
 import { CheckboxGroup } from '../components'
+import { CustomCheckboxProps } from '../components/CheckboxGroup'
+import { DomainOption } from '../domain/types'
 import { useAnswersStore } from '../state'
 
 import { validationSchema } from './Form.config'
@@ -28,9 +30,44 @@ export const FormView = () => {
             name: formData.name,
             mail: formData.mail,
             age: formData.age,
-            interests: [],
+            interests:
+                formData.interests !== undefined
+                    ? [...(formData.interests as Array<DomainOption>)]
+                    : [],
         })
     })
+
+    function castOptionsArray(value: Array<CustomCheckboxProps>) {
+        const result: Array<DomainOption> = []
+        for (const v of value) {
+            const obj: DomainOption = {}
+            obj[Number(v.id)] = {
+                isChecked: v.checked as boolean,
+                label: `${v.label}`,
+            }
+            result.push(obj)
+        }
+        return result
+    }
+
+    function castValueArray(
+        value: Array<DomainOption>,
+    ): Array<CustomCheckboxProps> {
+        if (value.length === 0) {
+            value = [...answers.interests]
+        }
+        const result: Array<CustomCheckboxProps> = []
+        for (const el of value) {
+            const id = Number(Object.keys(el)[0])
+            const obj: CustomCheckboxProps = {
+                id: `${id}`,
+                label: el[id].label,
+                checked: el[id].isChecked,
+            }
+            result.push(obj)
+        }
+        return result
+    }
 
     return (
         <div id="form-view">
@@ -93,12 +130,23 @@ export const FormView = () => {
                     CheckboxGroup's options. This could be detrimental
                     to your final assessment.
                 */}
-                {/* <Controller
-                    render={() => (
+                <Controller
+                    control={control}
+                    defaultValue={answers.interests}
+                    render={({ field: { onChange, value } }) => (
                         <CheckboxGroup
+                            id="interest"
+                            label="Interests"
+                            onChange={value => {
+                                onChange(castOptionsArray(value))
+                            }}
+                            options={castValueArray(
+                                value as Array<DomainOption>,
+                            )}
                         />
                     )}
-                /> */}
+                    name="interests"
+                />
                 <Button
                     variant="contained"
                     disabled={!isValid}
