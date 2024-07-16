@@ -1,4 +1,20 @@
-import React from 'react'
+import { Delete, Edit } from '@mui/icons-material'
+import {
+    Container,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+} from '@mui/material'
+import React, { useEffect } from 'react'
+
+import { DomainAnswers, DomainOption } from '../domain/types'
+import { useAnswersStore } from '../state'
+import './table.css'
 
 // TASK 4:
 // - Implement the table from this mockup (public/table_view_mockup.png).
@@ -14,4 +30,83 @@ import React from 'react'
 // - Invoke useResetAnswers hook on delete button click.
 // - See useResetAnswers hook for more guidelines.
 
-export const TableView = () => <div id="table-view"></div>
+export const TableView = () => {
+    const answers = useAnswersStore(state => state.getAnswers())
+
+    useEffect(() => {
+        document.title = 'Answers table'
+    }, [])
+
+    function formatInterests(value: Array<DomainOption>): string {
+        const interests = []
+        for (const el of value) {
+            const id = Number(Object.keys(el)[0])
+            if (el[id].isChecked) {
+                interests.push(el[id].label)
+            }
+        }
+        return interests.toString()
+    }
+
+    const displayTable = () => {
+        const rows = []
+        for (const key in answers) {
+            rows.push(
+                <TableRow
+                    key={key}
+                    sx={{
+                        '&:last-child td, &:last-child th': {
+                            border: 0,
+                        },
+                    }}
+                >
+                    <TableCell component="th" scope="row">
+                        <Typography sx={{ textTransform: 'capitalize' }}>
+                            {key}
+                        </Typography>
+                    </TableCell>
+                    <TableCell>
+                        {Array.isArray(answers[key as keyof DomainAnswers])
+                            ? formatInterests(
+                                  answers[
+                                      key as keyof DomainAnswers
+                                  ] as Array<DomainOption>,
+                              )
+                            : `${answers[key as keyof DomainAnswers]}`}
+                    </TableCell>
+                </TableRow>,
+            )
+        }
+        return rows
+    }
+
+    return (
+        <Container maxWidth="md">
+            <div id="table-view">
+                <div className="actions">
+                    <Edit fontSize="medium" color="disabled" />
+                    <Delete fontSize="medium" color="disabled" />
+                </div>
+                <TableContainer component={Paper}>
+                    <Table aria-label="answers table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    <Typography fontWeight="bold" variant="h6">
+                                        Questions
+                                    </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography fontWeight="bold" variant="h6">
+                                        Answers
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>{displayTable()}</TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
+        </Container>
+    )
+}
