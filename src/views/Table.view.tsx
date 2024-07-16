@@ -1,6 +1,7 @@
 import { Delete, Edit } from '@mui/icons-material'
 import {
     Container,
+    IconButton,
     Paper,
     Table,
     TableBody,
@@ -11,9 +12,12 @@ import {
     Typography,
 } from '@mui/material'
 import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { APP_ROUTES } from '../domain/routes'
 import { DomainAnswers, DomainOption } from '../domain/types'
 import { useAnswersStore } from '../state'
+
 import './table.css'
 
 // TASK 4:
@@ -32,6 +36,7 @@ import './table.css'
 
 export const TableView = () => {
     const answers = useAnswersStore(state => state.getAnswers())
+    const navigate = useNavigate()
 
     useEffect(() => {
         document.title = 'Answers table'
@@ -84,8 +89,22 @@ export const TableView = () => {
         <Container maxWidth="md">
             <div id="table-view">
                 <div className="actions">
-                    <Edit fontSize="medium" color="disabled" />
-                    <Delete fontSize="medium" color="disabled" />
+                    <IconButton
+                        aria-label="edit answers"
+                        onClick={() => {
+                            navigate(APP_ROUTES.FORM)
+                        }}
+                    >
+                        <Edit fontSize="medium" color="disabled" />
+                    </IconButton>
+                    <IconButton
+                        aria-label="delete answers"
+                        onClick={() => {
+                            //todo
+                        }}
+                    >
+                        <Delete fontSize="medium" color="disabled" />
+                    </IconButton>
                 </div>
                 <TableContainer component={Paper}>
                     <Table aria-label="answers table">
