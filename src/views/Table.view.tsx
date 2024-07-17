@@ -1,5 +1,6 @@
 import { Delete, Edit } from '@mui/icons-material'
 import {
+    CircularProgress,
     Container,
     IconButton,
     Paper,
@@ -39,6 +40,7 @@ export const TableView = () => {
     const answers = useAnswersStore(state => state.getAnswers())
     const resetAnswers = useResetAnswers()
     const navigate = useNavigate()
+    const loading = useAnswersStore(state => state.loading)
 
     useEffect(() => {
         document.title = 'Answers table'
@@ -93,6 +95,7 @@ export const TableView = () => {
                 <div className="actions">
                     <IconButton
                         aria-label="edit answers"
+                        disabled={loading}
                         onClick={() => {
                             navigate(APP_ROUTES.FORM)
                         }}
@@ -101,11 +104,16 @@ export const TableView = () => {
                     </IconButton>
                     <IconButton
                         aria-label="delete answers"
+                        disabled={loading}
                         onClick={() => {
                             resetAnswers.mutate()
                         }}
                     >
-                        <Delete fontSize="medium" color="disabled" />
+                        {loading ? (
+                            <CircularProgress size={25} color="inherit" />
+                        ) : (
+                            <Delete fontSize="medium" color="disabled" />
+                        )}
                     </IconButton>
                 </div>
                 <TableContainer component={Paper}>

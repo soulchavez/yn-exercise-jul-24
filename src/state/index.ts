@@ -10,7 +10,14 @@ type AnswersStoreActions = {
     getAnswers: () => DomainAnswers
 }
 
-export type AnswersStore = AnswersStoreProperties & AnswersStoreActions
+type UIState = {
+    loading: boolean
+    setLoading: (loading: boolean) => void
+}
+
+export type AnswersStore = AnswersStoreProperties &
+    AnswersStoreActions &
+    UIState
 
 const initialState: AnswersStoreProperties = {
     name: '',
@@ -28,6 +35,8 @@ const createStore: StateCreator<AnswersStore> = (set, get) => ({
         mail: get().mail,
         interests: get().interests,
     }),
+    loading: false,
+    setLoading: loading => set(state => ({ ...state, loading })),
 })
 
 export const useAnswersStore = create(devtools(createStore))

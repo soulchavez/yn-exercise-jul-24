@@ -1,5 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Box, Button, TextField } from '@mui/material'
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Container,
+    TextField,
+} from '@mui/material'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -13,6 +19,7 @@ import { validationSchema } from './Form.config'
 
 export const FormView = () => {
     const answers = useAnswersStore(state => state.getAnswers())
+    const loading = useAnswersStore(state => state.loading)
 
     const {
         control,
@@ -70,58 +77,65 @@ export const FormView = () => {
     }
 
     return (
-        <div id="form-view">
-            <Box
-                display="flex"
-                gap={4}
-                sx={{ flexDirection: 'column', width: '300px' }}
-            >
-                <Controller
-                    name="name"
-                    control={control}
-                    defaultValue={answers.name}
-                    render={({ field: { onChange, value } }) => (
-                        <TextField
-                            label="Name"
-                            variant="standard"
-                            onChange={onChange}
-                            value={value}
-                            helperText={errors.name?.message || ''}
-                            error={Boolean(errors.name?.message)}
-                        />
-                    )}
-                />
-                <Controller
-                    name="age"
-                    control={control}
-                    defaultValue={answers.age}
-                    render={({ field: { onChange, value } }) => (
-                        <TextField
-                            label="Age"
-                            variant="standard"
-                            onChange={onChange}
-                            value={value}
-                            helperText={errors.age?.message || ''}
-                            error={Boolean(errors.age?.message)}
-                        />
-                    )}
-                />
-                <Controller
-                    name="mail"
-                    control={control}
-                    defaultValue={answers.mail}
-                    render={({ field: { onChange, value } }) => (
-                        <TextField
-                            label="Email"
-                            variant="standard"
-                            onChange={onChange}
-                            value={value}
-                            helperText={errors.mail?.message || ''}
-                            error={Boolean(errors.mail?.message)}
-                        />
-                    )}
-                />
-                {/*
+        <Container
+            maxWidth="md"
+            sx={{ display: 'flex', justifyContent: 'center' }}
+        >
+            <div id="form-view">
+                <Box
+                    display="flex"
+                    gap={4}
+                    sx={{
+                        flexDirection: 'column',
+                        width: { xs: '220px', s: '230px', md: '300px' },
+                    }}
+                >
+                    <Controller
+                        name="name"
+                        control={control}
+                        defaultValue={answers.name}
+                        render={({ field: { onChange, value } }) => (
+                            <TextField
+                                label="Name"
+                                variant="standard"
+                                onChange={onChange}
+                                value={value}
+                                helperText={errors.name?.message || ''}
+                                error={Boolean(errors.name?.message)}
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="age"
+                        control={control}
+                        defaultValue={answers.age}
+                        render={({ field: { onChange, value } }) => (
+                            <TextField
+                                label="Age"
+                                variant="standard"
+                                onChange={onChange}
+                                value={value}
+                                helperText={errors.age?.message || ''}
+                                error={Boolean(errors.age?.message)}
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="mail"
+                        control={control}
+                        defaultValue={answers.mail}
+                        render={({ field: { onChange, value } }) => (
+                            <TextField
+                                label="Email"
+                                variant="standard"
+                                onChange={onChange}
+                                value={value}
+                                helperText={errors.mail?.message || ''}
+                                error={Boolean(errors.mail?.message)}
+                            />
+                        )}
+                    />
+                    {/*
                     TASK 2:
                     - Integrate CheckboxGroup into the form, controlled
                     by react-hook-form.
@@ -131,33 +145,38 @@ export const FormView = () => {
                     CheckboxGroup's options. This could be detrimental
                     to your final assessment.
                 */}
-                <Controller
-                    control={control}
-                    defaultValue={answers.interests}
-                    render={({ field: { onChange, value } }) => (
-                        <CheckboxGroup
-                            id="interest"
-                            label="Interests"
-                            onChange={value => {
-                                onChange(castOptionsArray(value))
-                            }}
-                            options={castValueArray(
-                                value as Array<DomainOption>,
-                            )}
-                            helperText={errors.interests?.message || ''}
-                            error={Boolean(errors.interests?.message)}
-                        />
-                    )}
-                    name="interests"
-                />
-                <Button
-                    variant="contained"
-                    disabled={!isValid}
-                    onClick={onSubmit}
-                >
-                    Submit
-                </Button>
-            </Box>
-        </div>
+                    <Controller
+                        control={control}
+                        defaultValue={answers.interests}
+                        render={({ field: { onChange, value } }) => (
+                            <CheckboxGroup
+                                id="interest"
+                                label="Interests"
+                                onChange={value => {
+                                    onChange(castOptionsArray(value))
+                                }}
+                                options={castValueArray(
+                                    value as Array<DomainOption>,
+                                )}
+                                helperText={errors.interests?.message || ''}
+                                error={Boolean(errors.interests?.message)}
+                            />
+                        )}
+                        name="interests"
+                    />
+                    <Button
+                        variant="contained"
+                        disabled={!isValid || loading}
+                        onClick={onSubmit}
+                    >
+                        {loading ? (
+                            <CircularProgress size={25} color="inherit" />
+                        ) : (
+                            'Submit'
+                        )}
+                    </Button>
+                </Box>
+            </div>
+        </Container>
     )
 }

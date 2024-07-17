@@ -10,11 +10,16 @@ import { useAnswersStore } from '../state'
 
 export const useResetAnswers = () => {
     const setAnswers = useAnswersStore(state => state.setAnswers)
+    const setLoading = useAnswersStore(state => state.setLoading)
     return useMutation({
-        mutationFn: async () => await resetAnswersFromApi(),
+        mutationFn: async () => {
+            setLoading(true)
+            return await resetAnswersFromApi()
+        },
         onSuccess: ({ data }) => {
             const result = apiToDomainAnswersConverter(data)
             setAnswers(result)
+            setLoading(false)
         },
     })
 }
