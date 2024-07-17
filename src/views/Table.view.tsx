@@ -14,6 +14,7 @@ import {
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { useResetAnswers } from '../api-hooks/useResetAnswers'
 import { APP_ROUTES } from '../domain/routes'
 import { DomainAnswers, DomainOption } from '../domain/types'
 import { useAnswersStore } from '../state'
@@ -36,6 +37,7 @@ import './table.css'
 
 export const TableView = () => {
     const answers = useAnswersStore(state => state.getAnswers())
+    const resetAnswers = useResetAnswers()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -100,7 +102,7 @@ export const TableView = () => {
                     <IconButton
                         aria-label="delete answers"
                         onClick={() => {
-                            //todo
+                            resetAnswers.mutate()
                         }}
                     >
                         <Delete fontSize="medium" color="disabled" />
